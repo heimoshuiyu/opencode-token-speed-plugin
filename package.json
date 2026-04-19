@@ -21,5 +21,8 @@
   "dependencies": {
     "@opencode-ai/plugin": "*",
     "solid-js": "1.9.10"
+  },
+  "devDependencies": {
+    "typescript": "^5.9.3"
   }
 }

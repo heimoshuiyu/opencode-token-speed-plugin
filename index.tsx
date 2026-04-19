@@ -21,19 +21,25 @@ const tui: TuiPlugin = async (api) => {
   }, 200)
   api.lifecycle.onDispose(() => clearInterval(timer))
 
-  api.event.on("message.part.delta", () => {
-    tracker.push()
+  api.event.on("message.part.delta", (event) => {
+    const delta = event.properties.delta
+    if (delta && typeof delta === "string" && delta.length > 0) {
+      const estimatedTokens = Math.max(1, Math.floor(delta.length / 4))
+      tracker.push(estimatedTokens)
+    }
   })
 
   api.event.on("message.part.updated", (event) => {
     const part = event.properties.part
-    if (part.type === "step-finish" && part.tokens) {
-      const outputTokens =
-        (part.tokens.output ?? 0) + (part.tokens.reasoning ?? 0)
-      if (outputTokens > 0) {
-        tracker.finishWithRealTokens(outputTokens)
-        setSpeed(tracker.speed())
-        setLastSpeed(tracker.speed())
+    if (part.type === "step-finish") {
+      if (part.tokens) {
+        const outputTokens =
+          (part.tokens.output ?? 0) + (part.tokens.reasoning ?? 0)
+        if (outputTokens > 0) {
+          tracker.finishWithRealTokens(outputTokens)
+          setSpeed(tracker.speed())
+          setLastSpeed(tracker.speed())
+        }
       }
     }
   })
@@ -48,7 +54,7 @@ const tui: TuiPlugin = async (api) => {
   api.slots.register({
     order: 50,
     slots: {
-      session_prompt_right(_ctx, props) {
+      session_prompt_right(_ctx: Record<string, unknown>, props: Record<string, unknown>) {
         const theme = () => api.theme.current
         const displaySpeed = () => speed() > 0 ? speed() : lastSpeed()
         return (

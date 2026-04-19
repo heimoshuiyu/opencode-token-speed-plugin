@@ -23,8 +23,10 @@ export function createSpeedTracker() {
     const now = Date.now()
     trim(now)
     if (window.length < 2) return 0
-    const span = (now - window[0].time) / 1000
-    if (span <= 0) return 0
+    const span = Math.max(
+      (window[window.length - 1].time - window[0].time) / 1000,
+      0.05,
+    )
     const totalChars = window.reduce((sum, e) => sum + e.chars, 0)
     return totalChars / CHARS_PER_TOKEN / span
   }

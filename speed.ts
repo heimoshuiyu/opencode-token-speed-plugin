@@ -1,14 +1,18 @@
-type WindowEntry = { time: number; chars: number }
+type WindowEntry = { time: number }
 
 const WINDOW_MS = 2000
-const CHARS_PER_TOKEN = 4
 
 export function createSpeedTracker() {
   let window: WindowEntry[] = []
+  let firstDeltaTime: number | null = null
+  let lastDeltaTime: number | null = null
+  let finishedSpeed: number | null = null
 
-  function push(chars: number) {
+  function push() {
     const now = Date.now()
-    window.push({ time: now, chars })
+    if (firstDeltaTime === null) firstDeltaTime = now
+    lastDeltaTime = now
+    window.push({ time: now })
     trim(now)
   }
 
@@ -19,7 +23,7 @@ export function createSpeedTracker() {
     }
   }
 
-  function speed(): number {
+  function estimatedSpeed(): number {
     const now = Date.now()
     trim(now)
     if (window.length < 2) return 0
@@ -27,13 +31,27 @@ export function createSpeedTracker() {
       (window[window.length - 1].time - window[0].time) / 1000,
       0.05,
     )
-    const totalChars = window.reduce((sum, e) => sum + e.chars, 0)
-    return totalChars / CHARS_PER_TOKEN / span
+    return window.length / span
+  }
+
+  function finishWithRealTokens(outputTokens: number) {
+    if (firstDeltaTime !== null && lastDeltaTime !== null && outputTokens > 0) {
+      const span = Math.max((lastDeltaTime - firstDeltaTime) / 1000, 0.05)
+      finishedSpeed = outputTokens / span
+    }
+  }
+
+  function speed(): number {
+    if (finishedSpeed !== null) return finishedSpeed
+    return estimatedSpeed()
   }
 
   function reset() {
     window = []
+    firstDeltaTime = null
+    lastDeltaTime = null
+    finishedSpeed = null
   }
 
-  return { push, speed, reset }
+  return { push, speed, reset, finishWithRealTokens }
 }

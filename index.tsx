@@ -21,9 +21,21 @@ const tui: TuiPlugin = async (api) => {
   }, 200)
   api.lifecycle.onDispose(() => clearInterval(timer))
 
-  api.event.on("message.part.delta", (event) => {
-    if (event.properties.field !== "text") return
-    tracker.push(event.properties.delta.length)
+  api.event.on("message.part.delta", () => {
+    tracker.push()
+  })
+
+  api.event.on("message.part.updated", (event) => {
+    const part = event.properties.part
+    if (part.type === "step-finish" && part.tokens) {
+      const outputTokens =
+        (part.tokens.output ?? 0) + (part.tokens.reasoning ?? 0)
+      if (outputTokens > 0) {
+        tracker.finishWithRealTokens(outputTokens)
+        setSpeed(tracker.speed())
+        setLastSpeed(tracker.speed())
+      }
+    }
   })
 
   api.event.on("session.status", (event) => {

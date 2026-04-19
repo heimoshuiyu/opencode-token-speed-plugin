@@ -1,0 +1,25 @@
+{
+  "name": "opencode-token-speed-plugin",
+  "version": "1.0.0",
+  "description": "OpenCode TUI plugin that displays real-time LLM output token speed (tok/s)",
+  "type": "module",
+  "exports": {
+    "./tui": "./index.tsx"
+  },
+  "keywords": [
+    "opencode",
+    "opencode-plugin",
+    "token-speed",
+    "tui"
+  ],
+  "author": "heimoshuiyu",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/heimoshuiyu/opencode-token-speed-plugin.git"
+  },
+  "dependencies": {
+    "@opencode-ai/plugin": "*",
+    "solid-js": "1.9.10"
+  }
+}

@@ -1,6 +1,6 @@
 {
   "name": "opencode-token-speed-plugin",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "OpenCode TUI plugin that displays real-time LLM output token speed (tok/s)",
   "type": "module",
   "exports": {

@@ -14,18 +14,10 @@ const tui: TuiPlugin = async (api) => {
   const [speed, setSpeed] = createSignal(0)
   const [lastSpeed, setLastSpeed] = createSignal(0)
 
-  const timer = setInterval(() => {
-    const current = tracker.speed()
-    setSpeed(current)
-    if (current > 0) setLastSpeed(current)
-  }, 200)
-  api.lifecycle.onDispose(() => clearInterval(timer))
-
   api.event.on("message.part.delta", (event) => {
     const delta = event.properties.delta
     if (delta && typeof delta === "string" && delta.length > 0) {
-      const estimatedTokens = Math.max(1, Math.floor(delta.length / 4))
-      tracker.push(estimatedTokens)
+      tracker.recordDelta()
     }
   })
 

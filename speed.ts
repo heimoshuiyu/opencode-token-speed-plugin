@@ -14,6 +14,8 @@ export function createSpeedTracker() {
       const span = Math.max((lastDeltaTime - firstDeltaTime) / 1000, 0.05)
       finishedSpeed = outputTokens / span
     }
+    firstDeltaTime = null
+    lastDeltaTime = null
   }
 
   function speed(): number {

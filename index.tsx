@@ -33,6 +33,7 @@ const tui: TuiPlugin = async (api) => {
           setLastSpeed(tracker.speed())
         }
       }
+      tracker.resetStep()
     }
   })
 

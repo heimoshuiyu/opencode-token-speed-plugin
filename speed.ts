@@ -14,6 +14,9 @@ export function createSpeedTracker() {
       const span = Math.max((lastDeltaTime - firstDeltaTime) / 1000, 0.05)
       finishedSpeed = outputTokens / span
     }
+  }
+
+  function resetStep() {
     firstDeltaTime = null
     lastDeltaTime = null
   }
@@ -28,5 +31,5 @@ export function createSpeedTracker() {
     finishedSpeed = null
   }
 
-  return { recordDelta, speed, reset, finishWithRealTokens }
+  return { recordDelta, speed, reset, resetStep, finishWithRealTokens }
 }
